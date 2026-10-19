@@ -1,0 +1,60 @@
+
+
+#REGISTRAR CONSULTA
+def registrar_consulta():
+    global cantidad_consultas
+
+    print("\n--- REGISTRAR CONSULTA ---")
+
+    if cantidad_consultas >= MAX_CONSULTAS:
+        print("[ERROR] Se alcanzó el límite de 100 consultas.")
+        return
+
+    codigo = input("Ingrese código de estudiante o DNI: ").strip()
+
+    if not validar_codigo(codigo):
+        print("[ERROR] El código debe tener al menos 8 caracteres.")
+        return
+
+    if buscar_indice(codigo) != -1:
+        print("[ERROR] Ya existe una consulta con ese código.")
+        return
+
+    area = seleccionar_area()
+    if area is None:
+        print("[ERROR] Opción de sede no válida.")
+        return
+
+    motivo = seleccionar_motivo()
+    if motivo is None:
+        print("[ERROR] Opción de motivo no válida.")
+        return
+
+    print("\nHORARIOS DISPONIBLES")
+    print("1. 08:30 AM")
+    print("2. 10:45 AM")
+    print("3. 02:15 PM")
+    print("4. 04:45 PM")
+
+    horarios = {
+        "1": "08:30 AM",
+        "2": "10:45 AM",
+        "3": "02:15 PM",
+        "4": "04:45 PM"
+    }
+
+    opcion = input("Seleccione un horario: ")
+    horario = horarios.get(opcion)
+
+    if horario is None:
+        print("[ERROR] Horario no válido.")
+        return
+
+    nueva_consulta = Consulta(codigo, motivo, area, horario)
+
+    consultas[cantidad_consultas] = nueva_consulta
+    cantidad_consultas += 1
+
+    print("[ÉXITO] Consulta registrada correctamente.")
+    imprimir_ticket_atencion(nueva_consulta)
+
