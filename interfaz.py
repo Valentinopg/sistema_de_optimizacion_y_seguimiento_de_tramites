@@ -2,12 +2,10 @@ from consulta import Consulta
 
 
 class InterfazUsuario:
-    """Clase encargada de mostrar menús y capturar entradas."""
-
     @staticmethod
     def mostrar_menu():
         print("\n========================================")
-        print("      SISTEMA DE CONTACTO UPN          ")
+        print("        SISTEMA DE CONTACTO UPN         ")
         print("========================================")
         print("1. Registrar consulta")
         print("2. Buscar consulta")
@@ -19,18 +17,20 @@ class InterfazUsuario:
         print("8. Salir")
         print("========================================")
 
+
     @staticmethod
     def imprimir_ticket(consulta: Consulta):
         print("\n========================================")
-        print("          TICKET DE ATENCIÓN            ")
+        print("           TICKET DE ATENCIÓN           ")
         print("========================================")
-        print(f"Código/DNI:       {consulta.codigo}")
-        print(f"Motivo:           {consulta.motivo}")
-        print(f"Sede / Área:      {consulta.area}")
-        print(f"Horario asignado: {consulta.horario}")
-        print(f"Estado:           {consulta.estado}")
+        print(f"Código/DNI:      {consulta.codigo}")
+        print(f"Motivo:          {consulta.motivo}")
+        print(f"Sede / Área:     {consulta.area}")
+        print(f"Horario asignado:{consulta.horario}")
+        print(f"Estado:          {consulta.estado}")
         print("========================================")
         print("Regrese en el horario indicado para ser atendido sin hacer filas.")
+
 
     @staticmethod
     def solicitar_area() -> str:
@@ -41,6 +41,7 @@ class InterfazUsuario:
         opcion = input("Ingrese una opción: ").strip()
         areas = {"1": "Los Olivos", "2": "Breña", "3": "Comas"}
         return areas.get(opcion)
+
 
     @staticmethod
     def solicitar_motivo() -> str:
@@ -56,6 +57,7 @@ class InterfazUsuario:
         }
         return motivos.get(opcion)
 
+
     @staticmethod
     def solicitar_horario() -> str:
         print("\nHORARIOS DISPONIBLES")
@@ -66,6 +68,7 @@ class InterfazUsuario:
         opcion = input("Seleccione un horario: ").strip()
         horarios = {"1": "08:30 AM", "2": "10:45 AM", "3": "02:15 PM", "4": "04:45 PM"}
         return horarios.get(opcion)
+
 
     @staticmethod
     def mostrar_lista(consultas: list, cantidad: int):
