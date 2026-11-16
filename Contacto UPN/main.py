@@ -48,7 +48,7 @@ def main():
             nueva = Consulta(codigo, motivo, area, horario)
             if gestor_global.registrar_consulta(nueva):
                 gestor_global.guardar_en_txt()  # NUEVO
-                print("[ÉXITO] Consulta registrada correctamente en la lista dinámica.")
+                print("[ÉXITO] Consulta registrada correctamente.")
                 vista.imprimir_ticket(nueva)
             else:
                 print("[ERROR] No se pudo registrar la consulta.")
