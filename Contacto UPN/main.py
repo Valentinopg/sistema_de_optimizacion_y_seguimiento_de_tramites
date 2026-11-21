@@ -2,134 +2,116 @@ from consulta import Consulta
 from gestion import GestionConsultas
 from interfaz import InterfazUsuario
 
-gestor_global = GestionConsultas()
-
-
 def main():
-    global gestor_global
-    vista = InterfazUsuario()
-    gestor_global.cargar_desde_txt()  # NUEVO: carga los datos guardados al iniciar
 
+    gestor = GestionConsultas()
+    vista = InterfazUsuario()   
+    gestor.cargar_desde_txt()
 
     while True:
         vista.mostrar_menu()
-        opcion = input("Ingrese una opción (1-8): ").strip()
-
+        opcion = input("Ingrese una opción (1-10): ").strip()
 
         if opcion == "1":
             print("\n--- REGISTRAR CONSULTA ---")
-            codigo = input("Ingrese código de estudiante o DNI: ").strip()
-            if len(codigo) < 8:
-                print("[ERROR] Datos inválidos. Ingrese un código/DNI válido (mínimo 8 dígitos).")
-                continue
-            if gestor_global.buscar_consulta(codigo) is not None:
-                print("[ERROR] El código/DNI ya se encuentra registrado.")
-                continue
 
+            
+            while True:
+                codigo = vista.solicitar_codigo()
+
+                if gestor.buscar_consulta(codigo) is None:
+                    break
+
+                print("[ERROR] El código/DNI ya se encuentra registrado.")
 
             area = vista.solicitar_area()
-            if not area:
-                print("[ERROR] Opción de sede no válida.")
-                continue
-
-
             motivo = vista.solicitar_motivo()
-            if not motivo:
-                print("[ERROR] Opción de motivo no válida.")
-                continue
-
-
             horario = vista.solicitar_horario()
-            if not horario:
-                print("[ERROR] Horario no válido.")
-                continue
 
+            
+            nueva_consulta = Consulta(codigo, motivo, area, horario)
 
-            nueva = Consulta(codigo, motivo, area, horario)
-            if gestor_global.registrar_consulta(nueva):
-                gestor_global.guardar_en_txt()  # NUEVO
-                print("[ÉXITO] Consulta registrada correctamente.")
-                vista.imprimir_ticket(nueva)
+            if gestor.registrar_consulta(nueva_consulta):
+                gestor.guardar_en_txt()
+                print("[ÉXITO] Consulta registrada correctamente en la lista dinámica.")
+                vista.imprimir_ticket(nueva_consulta)
             else:
                 print("[ERROR] No se pudo registrar la consulta.")
 
-
         elif opcion == "2":
             print("\n--- BUSCAR CONSULTA ---")
-            codigo = input("Ingrese el código/DNI: ").strip()
-            consulta = gestor_global.buscar_consulta(codigo)
-            if consulta:
+            codigo = vista.solicitar_codigo()
+            consulta = gestor.buscar_consulta(codigo)
+
+            if consulta is not None:
                 vista.imprimir_ticket(consulta)
             else:
                 print("[MENSAJE] Consulta no encontrada.")
 
-
         elif opcion == "3":
             print("\n--- MODIFICAR CONSULTA ---")
-            codigo = input("Ingrese el código/DNI: ").strip()
-            if gestor_global.buscar_consulta(codigo) is None:
-                print("[MENSAJE] Consulta no encontrada.")
-                continue
+            codigo = vista.solicitar_codigo()
+            consulta = gestor.buscar_consulta(codigo)
 
+            if consulta is not None:
+                nuevo_motivo = vista.solicitar_motivo()
+                nueva_area = vista.solicitar_area()
 
-            nuevo_motivo = vista.solicitar_motivo()
-            nueva_area = vista.solicitar_area()
-            if nuevo_motivo and nueva_area:
-                if gestor_global.modificar_consulta(codigo, nuevo_motivo, nueva_area):
-                    gestor_global.guardar_en_txt()  # NUEVO
+                if gestor.modificar_consulta(codigo, nuevo_motivo, nueva_area):
+                    gestor.guardar_en_txt()
                     print("[ÉXITO] Consulta modificada correctamente.")
-                else:
-                    print("[ERROR] Datos no válidos. No se realizaron cambios.")
-
+            else:
+                print("[MENSAJE] Consulta no encontrada.")
 
         elif opcion == "4":
             print("\n--- ELIMINAR CONSULTA ---")
-            codigo = input("Ingrese el código/DNI: ").strip()
-            if gestor_global.eliminar_consulta(codigo):
-                gestor_global.guardar_en_txt()  # NUEVO
+            codigo = vista.solicitar_codigo()
+
+            if gestor.eliminar_consulta(codigo):
+                gestor.guardar_en_txt()
                 print("[ÉXITO] Consulta eliminada correctamente de la lista dinámica.")
             else:
                 print("[MENSAJE] Consulta no encontrada.")
 
-
         elif opcion == "5":
-            vista.mostrar_lista(gestor_global.obtener_arreglo(), gestor_global.obtener_cantidad())
-
+            vista.mostrar_lista(gestor.obtener_arreglo(), gestor.obtener_cantidad())
 
         elif opcion == "6":
             print("\n--- DERIVAR / ACTUALIZAR ESTADO ---")
-            codigo = input("Ingrese el código/DNI: ").strip()
-            if gestor_global.buscar_consulta(codigo) is None:
-                print("[MENSAJE] Consulta no encontrada.")
-                continue
+            codigo = vista.solicitar_codigo()
+            consulta = gestor.buscar_consulta(codigo)
 
+            if consulta is not None:
+                nueva_area = vista.solicitar_area()
+                nuevo_estado = vista.solicitar_estado()
 
-            nueva_area = vista.solicitar_area()
-            print("\nESTADOS DISPONIBLES: 1. Pendiente | 2. En proceso | 3. Atendida")
-            op_est = input("Seleccione el estado: ").strip()
-            estados = {"1": "Pendiente", "2": "En proceso", "3": "Atendida"}
-            nuevo_estado = estados.get(op_est)
-
-
-            if nueva_area and nuevo_estado:
-                if gestor_global.derivar_consulta(codigo, nueva_area, nuevo_estado):
-                    gestor_global.guardar_en_txt()  # NUEVO
+                if gestor.derivar_consulta(codigo, nueva_area, nuevo_estado):
+                    gestor.guardar_en_txt()
                     print("[ÉXITO] Seguimiento actualizado correctamente.")
-                else:
-                    print("[ERROR] Sede o estado no válido.")
-
+            else:
+                print("[MENSAJE] Consulta no encontrada.")
 
         elif opcion == "7":
-            gestor_global.ordenar_consultas_burbuja()
-            gestor_global.guardar_en_txt()  # NUEVO
+            gestor.ordenar_consultas_burbuja()
+            gestor.guardar_en_txt()
             print("[ÉXITO] Consultas ordenadas por sede (Burbuja).")
-            vista.mostrar_lista(gestor_global.obtener_arreglo(), gestor_global.obtener_cantidad())
+            vista.mostrar_lista(gestor.obtener_arreglo(), gestor.obtener_cantidad())
 
-
+        
         elif opcion == "8":
+            print("\n--- ARREGLOS PARALELOS ---")
+            gestor.mostrar_arreglos_paralelos()
+
+        elif opcion == "9":
+            print("\n--- CONTEO RECURSIVO ---")
+
+            cantidad = gestor.contar_consultas_recursivo()
+
+            print("Cantidad de consultas registradas:", cantidad)
+
+        elif opcion == "10":
             print("Saliendo del sistema de Contacto UPN...")
             break
-
 
         else:
             print("[ERROR] Opción no válida. Intente nuevamente.")

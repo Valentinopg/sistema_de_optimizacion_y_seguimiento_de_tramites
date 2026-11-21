@@ -1,53 +1,34 @@
 class Consulta:
-    def __init__(self, codigo: str, motivo: str, area: str, horario: str = "08:30 AM", estado: str = "Pendiente"):
-        self._codigo = codigo
-        self._motivo = motivo
-        self._area = area
-        self._horario = horario
-        self._estado = estado
 
+    def __init__(self, codigo, motivo, area, horario, estado="Pendiente"):
+        self.codigo = codigo
+        self.motivo = motivo
+        self.area = area
+        self.horario = horario
+        self.estado = estado
 
-    @property
-    def codigo(self) -> str:
-        return self._codigo
+    def obtener_resumen(self):
+        return ("Código: " + self.codigo +
+                " | Área: " + self.area +
+                " | Horario: " + self.horario +
+                " | Estado: " + self.estado +
+                " | Motivo: " + self.motivo)
 
-    @property
-    def motivo(self) -> str:
-        return self._motivo
+    def modificar_datos(self, nuevo_motivo, nueva_area):
+        self.motivo = nuevo_motivo
+        self.area = nueva_area
 
-    @motivo.setter
-    def motivo(self, nuevo_motivo: str):
-        if len(nuevo_motivo.strip()) > 0:
-            self._motivo = nuevo_motivo
+    def derivar_consulta(self, nueva_area):
+        self.area = nueva_area
+        self.estado = "En proceso"
 
+    def actualizar_estado(self, nuevo_estado):
+        self.estado = nuevo_estado
 
-    @property
-    def area(self) -> str:
-        return self._area
-
-
-    @area.setter
-    def area(self, nueva_area: str):
-        if len(nueva_area.strip()) > 0:
-            self._area = nueva_area
-
-
-    @property
-    def horario(self) -> str:
-        return self._horario
-
-
-    @property
-    def estado(self) -> str:
-        return self._estado
-
-
-    @estado.setter
-    def estado(self, nuevo_estado: str):
-        if nuevo_estado in ["Pendiente", "En proceso", "Atendida"]:
-            self._estado = nuevo_estado
-
-
-    def obtener_resumen(self) -> str:
-        return (f"Código: {self._codigo:<12} | Sede/Área: {self._area:<12} | "
-                f"Horario: {self._horario:<10} | Estado: {self._estado:<12} | Motivo: {self._motivo}")
+    def mostrar_datos(self):
+        print("\n--- INFORMACIÓN DE LA CONSULTA ---")
+        print("Código:", self.codigo)
+        print("Motivo:", self.motivo)
+        print("Área:", self.area)
+        print("Horario:", self.horario)
+        print("Estado:", self.estado)
